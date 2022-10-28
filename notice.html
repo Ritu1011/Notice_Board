@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+       
+        .main_container{
+            text-align: center;
+            width: 40%;
+            margin: auto;
+            height: auto;
+          
+        }
+        .first_section{
+            width: 100%;
+            box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+        }
+        .data_field{
+            display: flex;
+            justify-content: space-evenly;
+           }
+        .main_container button{
+            background-color: #8864b3;
+            border: none;
+            width: 60px;
+            height: 60px;
+            color: azure;
+            font-size: 30px;
+            border-radius: 50%;
+            margin-bottom: 30px;
+            
+        }
+       textarea{
+                 width: 400px;
+                 height: 60px;
+                
+        }
+        .notice_board{
+            background-color: #8864b3;
+            font-size: 22px;
+            padding: 20px 0px;
+            color: white;
+        }
+        .data_field{
+            margin-top: 20px;
+        }
+
+        #display_notice {
+            margin-bottom: 10px;
+           }
+        #display_notice div{
+            border-bottom: 2.5px solid  #8864b3;
+            box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+            margin-bottom: 20px;
+        }
+
+    </style>
+</head>
+<body>
+   <div class="main_container">
+    <div class="first_section" >
+    <div class="notice_board">
+        Notice Board
+    </div>
+    <div class="data_field">
+    <textarea type="text" placeholder="Enter text here.........." id="notice" ></textarea>
+    
+    <button onclick="submitNotice()">+</button>
+</div>
+</div>
+    <section>
+        <div id="display_notice" >
+        
+        </div>
+    </section>
+
+   </div>
+</body>
+</html>
+<script>
+
+async function submitNotice(){
+    try{
+        
+        let username=JSON.parse(localStorage.getItem("loginData"))||[]
+        let notice_data={
+        text:document.getElementById("notice").value,
+        userId:username[0]._id
+        };
+       
+        notice_data=JSON.stringify(notice_data);
+       let res=await fetch("https://crime-check.herokuapp.com/notice",{
+           method:'POST',
+           body:notice_data,
+           headers:{
+               "Content-Type":"application/json",
+           },
+       })
+      let data=await res.json();
+      console.log(data);
+      window.location.reload()
+    }
+    catch(err){
+   console.log(err);
+   }
+};
+getNotice()
+async function getNotice(){
+   try{
+        let res=await fetch("https://crime-check.herokuapp.com/notice")
+      let data=await res.json();
+      console.log(data);
+      Display_notice(data)
+    }
+    catch(err){
+   console.log(err);
+   }
+}
+
+const Display_notice=(e)=>{
+    
+   
+    e.map((el)=>{
+        let content =document.getElementById("display_notice")
+        let box=document.createElement("div")
+        
+        let notice=document.createElement("p")
+        notice.innerHTML=el.text
+ 
+        let name=document.createElement("p")
+        name.innerHTML=el.userId.name
+
+      let date=new Date(el.createdAt); 
+      let fainaldate=document.createElement("p")
+      fainaldate.innerHTML=date.toLocaleString()
+
+        box.append(notice,name,fainaldate)
+        content.append(box)
+    })
+    
+}
+
+
+</script>

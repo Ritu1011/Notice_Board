@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+         .container{
+            text-align: center;
+            width: 40%;
+            margin: auto;
+            height: auto;
+            box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+          }
+        .container div:nth-child(1){
+            background-color: #8864b3;
+            color: white;
+            font-size: 22px;
+            padding: 20px 0px;
+        }
+    .container div:nth-child(2) input{
+    margin-top: 50px;
+    margin-bottom:  40px;
+    font-size: 18px;
+    width: 50%;
+    text-align: center;
+    line-height: 1.6em;
+    border: 0px solid transparent;
+    border-bottom-width: 2.5px;
+    border-bottom-color:#8864b3;
+    outline: 0;
+    color: #212121;
+    
+           }
+       
+           .container div button{
+           padding: 10px 40px;
+           }
+           .container button{
+           background-color: #8864b3;
+            border: none;
+            padding: 10px 20px;
+            color: azure;
+            font-size: 22px;
+           
+            margin-bottom: 30px;
+}
+    </style>
+</head>
+<body>
+   <div class="container">
+    <div>Pick a username</div>
+    <div >
+    <input type="text" placeholder="name" id="username" >
+    <br/>
+    <button onclick="submit()">Login</button>
+</div>
+   </div>
+</body>
+</html>
+<script>
+  let username=JSON.parse(localStorage.getItem("loginData"))||[]
+async function submit(){
+
+   try{
+        let register_data={
+        name:document.getElementById("username").value,
+        };
+       register_data=JSON.stringify(register_data);
+       let res=await fetch("https://crime-check.herokuapp.com/user",{
+           method:'POST',
+           body:register_data,
+           headers:{
+               "Content-Type":"application/json",
+           },
+       })
+  let data=await res.json();
+  if(data.errors){
+   alert(data.errors[0].message)
+     }
+  else{
+    username=""
+      let arr=[]
+      arr.push(data)
+      localStorage.setItem("loginData",JSON.stringify(arr))
+     window.location.href="./notice.html"
+  }
+   
+     }
+    catch(err){
+   console.log(err);
+   alert("not done")
+   }
+}
+
+
+
+
+</script>
